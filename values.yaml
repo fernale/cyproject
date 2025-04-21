@@ -7,7 +7,7 @@ cypress:
   git:
     url: "https://github.com/fernale/cyproject.git"
     branch: "main"
-    path: "."  # Subdirectory within the repo
+    path: "cyproject"  # Subdirectory within the repo
 
 resources:
   requests:
