@@ -15,6 +15,7 @@ spec:
         - name: test-suite
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-cypress-pvc
+      
       initContainers:
         - name: clone-tests
           image: alpine/git:2.40.1
@@ -22,12 +23,13 @@ spec:
             - sh
             - -c
             - |
-              set -eux
-              git clone --depth 1 -b {{ .Values.cypress.git.branch }} {{ .Values.cypress.git.url }} /cypress-tests
-              cp -r /cypress-tests/{{ .Values.cypress.git.path }}/* /tests/
+              set -ex
+              git clone --depth 1 -b {{ .Values.cypress.git.branch }} {{ .Values.cypress.git.url }} /repo
+              cp -r /repo/{{ .Values.cypress.git.path }}/* /tests/
           volumeMounts:
             - name: test-suite
               mountPath: /tests
+
       containers:
         - name: cypress
           image: {{ .Values.cypress.image }}
@@ -49,7 +51,7 @@ spec:
             - --browser
             - "{{ .Values.cypress.browser }}"
             - --spec
-            - "e2e/**/*.cy.js"
+            - "cypress/e2e/*.cy.js"
           resources:
             requests:
               memory: "{{ .Values.resources.requests.memory }}"

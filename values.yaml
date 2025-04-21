@@ -1,13 +1,14 @@
+# values.yaml
 cypress:
   image: cypress/included:12.17.4
-  baseUrl: "https://example.cypress.io"
+  baseUrl: "https://example.cypress.io"  # Update with your target URL
   browser: "chrome"
   env: {}
-
+  
   git:
     url: "https://github.com/fernale/cyproject.git"
     branch: "main"
-    path: "cyproject"  # Subdirectory within the repo
+    path: "cyproject"  # Matches your directory structure
 
 resources:
   requests:
@@ -19,7 +20,7 @@ resources:
 
 job:
   backoffLimit: 3
-  ttlSecondsAfterFinished: 3600
+  ttlSecondsAfterFinished: 3600  # Cleanup after 1 hour
 
 persistence:
   storageClass: "standard"
