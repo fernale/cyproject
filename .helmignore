@@ -1,0 +1,7 @@
+# Common large files to ignore
+.git/
+.venv/
+node_modules/
+*.tgz
+*.tar.gz
+coverage/

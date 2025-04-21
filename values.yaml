@@ -1,0 +1,26 @@
+cypress:
+  image: cypress/included:12.17.4
+  baseUrl: "https://example.cypress.io"
+  browser: "chrome"
+  env: {}
+
+  git:
+    url: "https://github.com/your-org/cypress-tests.git"
+    branch: "main"
+    path: "cypress"  # Subdirectory within the repo
+
+resources:
+  requests:
+    memory: "2Gi"
+    cpu: "1"
+  limits:
+    memory: "4Gi"
+    cpu: "2"
+
+job:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 3600
+
+persistence:
+  storageClass: "standard"
+  size: "10Gi"

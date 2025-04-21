@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-cypress
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        app: cypress
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: test-suite
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-cypress-pvc
+      initContainers:
+        - name: clone-tests
+          image: alpine/git:2.40.1
+          command:
+            - sh
+            - -c
+            - |
+              set -eux
+              git clone --depth 1 -b {{ .Values.cypress.git.branch }} {{ .Values.cypress.git.url }} /cypress-tests
+              cp -r /cypress-tests/{{ .Values.cypress.git.path }}/* /tests/
+          volumeMounts:
+            - name: test-suite
+              mountPath: /tests
+      containers:
+        - name: cypress
+          image: {{ .Values.cypress.image }}
+          workingDir: /tests
+          env:
+            - name: CYPRESS_baseUrl
+              value: "{{ .Values.cypress.baseUrl }}"
+            {{- range $key, $value := .Values.cypress.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+          volumeMounts:
+            - name: test-suite
+              mountPath: /tests
+          command:
+            - npx
+            - cypress
+            - run
+            - --browser
+            - "{{ .Values.cypress.browser }}"
+            - --spec
+            - "e2e/**/*.cy.js"
+          resources:
+            requests:
+              memory: "{{ .Values.resources.requests.memory }}"
+              cpu: "{{ .Values.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.resources.limits.memory }}"
+              cpu: "{{ .Values.resources.limits.cpu }}"
+      restartPolicy: Never
