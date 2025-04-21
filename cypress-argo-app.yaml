@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cypress-test
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/fernale/cyproject.git'
+    targetRevision: main
+    path: '.'            # or the relative path to your chart if not at repo root
+    helm:
+      valueFiles:
+        - values.yaml    # or use another values file for prod/staging
+      # Optional: override release name
+      # releaseName: cypress-test
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
