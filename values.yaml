@@ -25,3 +25,7 @@ job:
 persistence:
   storageClass: "standard"
   size: "10Gi"
+
+gui:
+  port: 9000
+  host: cyproject.local
