@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-artifacts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-artifacts
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-artifacts
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: cypress-artifacts
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: cypress-artifacts
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-cypress-pvc
